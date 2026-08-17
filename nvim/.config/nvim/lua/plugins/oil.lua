@@ -1,5 +1,6 @@
 return {
   "stevearc/oil.nvim",
+  enabled = false, -- disabled: using built-in :Ex via <leader>pv instead
   ---@module 'oil'
   ---@type oil.SetupOpts
   opts = {},
@@ -18,6 +19,5 @@ return {
         end,
       },
     })
-    vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
   end,
 }

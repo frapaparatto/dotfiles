@@ -52,8 +52,10 @@ vim.keymap.set("n", "<C-k>", ":wincmd k<CR>")
 vim.keymap.set("n", "<C-l>", ":wincmd l<CR>")
 
 -- Plugins
-vim.keymap.set("n", "<leader>n", ":Neotree filesystem reveal left<CR>")
 vim.keymap.set("n", "<leader>pm", ":Lazy<CR>")
+
+-- File explorer (built-in, replaces oil/neo-tree)
+vim.keymap.set("n", "<leader>pv", ":Ex<CR>")
 
 -- Search
 vim.opt.hlsearch = true
