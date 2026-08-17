@@ -13,19 +13,6 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.softtabstop = 2
 
-vim.api.nvim_create_autocmd("BufEnter", {
-  callback = function()
-    local path = vim.fn.expand("%:p")
-
-    if path:match("/workspace/oss/git/") then
-      vim.opt_local.expandtab = false
-      vim.opt_local.tabstop = 8
-      vim.opt_local.softtabstop = 8
-      vim.opt_local.shiftwidth = 8
-    end
-  end,
-})
-
 -- Re-detect filetype after saving a new file (e.g. a script with a shebang
 -- but no extension). Neovim only runs shebang detection on BufReadPost, so
 -- a freshly created buffer never gets a filetype -> no treesitter/LSP.
@@ -58,7 +45,6 @@ vim.keymap.set("n", "<leader>pm", ":Lazy<CR>")
 vim.keymap.set("n", "<leader>pv", ":Ex<CR>")
 
 -- Search
-vim.opt.hlsearch = true
 vim.keymap.set("n", "<ESC>", "<cmd>nohlsearch<CR>")
 
 -- Disable arrow keys
@@ -71,5 +57,4 @@ end
 
 -- Insert mode escape
 vim.keymap.set("i", "jk", "<ESC>")
-vim.o.timeout = true
 vim.o.timeoutlen = 250
