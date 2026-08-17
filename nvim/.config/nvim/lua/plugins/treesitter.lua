@@ -16,7 +16,6 @@ return {
       })
 
       local ensureInstalled = {
-        "help",
         "c",
         "cpp",
         "lua",
