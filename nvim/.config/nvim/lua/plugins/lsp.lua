@@ -169,21 +169,56 @@ return {
         local opts = { buffer = args.buf }
 
         -- navigation
-        vim.keymap.set("n", "K",  vim.lsp.buf.hover,           vim.tbl_extend("force", opts, { desc = "Hover documentation" }))
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition,      vim.tbl_extend("force", opts, { desc = "Go to definition" }))
-        vim.keymap.set("n", "gr", vim.lsp.buf.references,      vim.tbl_extend("force", opts, { desc = "Go to references" }))
-        vim.keymap.set("n", "gi", vim.lsp.buf.implementation,  vim.tbl_extend("force", opts, { desc = "Go to implementation" }))
-        vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, vim.tbl_extend("force", opts, { desc = "Go to type definition" }))
+        vim.keymap.set(
+          "n",
+          "K",
+          vim.lsp.buf.hover,
+          vim.tbl_extend("force", opts, { desc = "Hover documentation" })
+        )
+        vim.keymap.set(
+          "n",
+          "gd",
+          vim.lsp.buf.definition,
+          vim.tbl_extend("force", opts, { desc = "Go to definition" })
+        )
+        vim.keymap.set(
+          "n",
+          "gr",
+          vim.lsp.buf.references,
+          vim.tbl_extend("force", opts, { desc = "Go to references" })
+        )
+        vim.keymap.set(
+          "n",
+          "gi",
+          vim.lsp.buf.implementation,
+          vim.tbl_extend("force", opts, { desc = "Go to implementation" })
+        )
+        vim.keymap.set(
+          "n",
+          "gt",
+          vim.lsp.buf.type_definition,
+          vim.tbl_extend("force", opts, { desc = "Go to type definition" })
+        )
 
         -- actions
-        vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format,      vim.tbl_extend("force", opts, { desc = "Format buffer" }))
-        vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, vim.tbl_extend("force", opts, { desc = "Code action" }))
-        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename,      vim.tbl_extend("force", opts, { desc = "Rename symbol" }))
-
-        -- diagnostics
-        vim.keymap.set("n", "<leader>d",  vim.diagnostic.open_float, vim.tbl_extend("force", opts, { desc = "Show diagnostic" }))
-        vim.keymap.set("n", "<leader>xq", vim.diagnostic.setqflist,  vim.tbl_extend("force", opts, { desc = "Diagnostics to quickfix" }))
-        vim.keymap.set("n", "<leader>xl", vim.diagnostic.setloclist, vim.tbl_extend("force", opts, { desc = "Buffer diagnostics to loclist" }))
+        vim.keymap.set(
+          "n",
+          "<leader>cf",
+          vim.lsp.buf.format,
+          vim.tbl_extend("force", opts, { desc = "Format buffer" })
+        )
+        vim.keymap.set(
+          "n",
+          "<leader>ca",
+          vim.lsp.buf.code_action,
+          vim.tbl_extend("force", opts, { desc = "Code action" })
+        )
+        vim.keymap.set(
+          "n",
+          "<leader>rn",
+          vim.lsp.buf.rename,
+          vim.tbl_extend("force", opts, { desc = "Rename symbol" })
+        )
       end,
     })
   end,
