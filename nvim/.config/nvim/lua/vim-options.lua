@@ -58,3 +58,9 @@ end
 -- Insert mode escape
 vim.keymap.set("i", "jk", "<ESC>")
 vim.o.timeoutlen = 250
+
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+
+vim.keymap.set("n", "C-d", "<C-d>zz")
+vim.keymap.set("n", "C-u", "<C-u>zz")
