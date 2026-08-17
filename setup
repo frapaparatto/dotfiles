@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# installing homebrew
+curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
+
+# actually check if installed, if so 
+brew bundle install
+
+# check everything is ok
+# install zsh and so on
+# remove the generated .zshrc
+#
+# install tpm
+# install stow if not present
+# run stow and setup
+

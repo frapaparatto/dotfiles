@@ -1,0 +1,16 @@
+[user]
+	name = Francesco Paparatto
+	email = francescopaparatto@gmail.com
+[init]
+	defaultBranch = main
+[pull]
+	rebase = true
+[core]
+	editor = nvim
+[sendemail]
+	smtpserver = smtp.gmail.com
+	smtpserverport = 587
+	smtpencryption = tls
+	smtpuser = francescopaparatto@gmail.com
+	from = Francesco Paparatto <francescopaparatto@gmail.com>
+	confirm = auto
