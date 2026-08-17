@@ -13,7 +13,7 @@ set -eo pipefail
 
 DOTFILES_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y-%m-%d-%H%M%S)"
-DEFAULT_PACKAGES="bin git nvim tmux zsh"
+DEFAULT_PACKAGES="bin git nvim tmux vim zsh"
 PACKAGES=""
 DRY=0
 
@@ -116,10 +116,22 @@ install_tpm() {
     execute git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
 }
 
+# vim/.vimrc calls plug#begin, so vim-plug itself has to exist before vim
+# is ever opened. Neovim's lazy.nvim bootstraps itself from init.lua; vim-plug
+# has no such self-install, so it's fetched here instead.
+install_vim_plug() {
+    if [[ -f "$HOME/.vim/autoload/plug.vim" ]]; then
+        log "already installed"
+        return 0
+    fi
+    execute curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+}
+
 clear_conflicts() {
     local f
     for f in "$HOME/.zshrc" "$HOME/.zprofile" "$HOME/.zshenv" \
-             "$HOME/.tmux.conf" "$HOME/.gitconfig"; do
+             "$HOME/.tmux.conf" "$HOME/.gitconfig" "$HOME/.vimrc"; do
         backup_if_real "$f"
     done
     log "backups, if any, are in $BACKUP_DIR"
@@ -151,6 +163,9 @@ post_install() {
     if have nvim; then
         execute nvim --headless "+Lazy! sync" +qa
     fi
+    if have vim; then
+        execute vim -es -u "$HOME/.vimrc" -i NONE "+PlugInstall --sync" +qa
+    fi
     echo
     log "done. open a new terminal to pick up the new shell config."
 }
@@ -165,6 +180,7 @@ main() {
     brew_bundle
     install_oh_my_zsh
     install_tpm
+    install_vim_plug
     clear_conflicts
     run_stow
     post_install

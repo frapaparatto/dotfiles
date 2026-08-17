@@ -6,6 +6,7 @@ Personal dotfiles, managed with GNU Stow. Each top-level directory is a stow pac
 - `git` gitconfig and global gitignore
 - `nvim` neovim config (lazy.nvim)
 - `tmux` tmux config
+- `vim` vimrc (vim-plug)
 - `zsh` zshrc and zprofile
 
 ## Setup
