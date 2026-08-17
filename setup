@@ -31,7 +31,7 @@ done
 
 log() {
     if [[ $DRY == 1 ]]; then
-        echo "[DRY_RUN] $*"
+        echo "[DRY_RUN]: $*"
     else
         echo "$*"
     fi
@@ -47,11 +47,6 @@ have() {
     command -v "$1" >/dev/null 2>&1
 }
 
-section() {
-    echo
-    echo "$1"
-}
-
 # Move a real file or directory out of the way so stow can link in its place.
 # Symlinks are left alone: those are already ours.
 backup_if_real() {
@@ -64,7 +59,6 @@ backup_if_real() {
 }
 
 install_homebrew() {
-    section "homebrew"
     if have brew; then
         log "already installed"
         return 0
@@ -76,7 +70,6 @@ install_homebrew() {
 # Homebrew is not on PATH yet in this process: PATH was built when the script
 # started, and .zprofile has not been stowed. shellenv fixes it for this run.
 load_brew_env() {
-    section "brew environment"
     local prefix
     for prefix in /opt/homebrew /usr/local; do
         if [[ -x "$prefix/bin/brew" ]]; then
@@ -94,7 +87,6 @@ load_brew_env() {
 }
 
 brew_bundle() {
-    section "brew bundle"
     if [[ ! -f "$DOTFILES_DIR/Brewfile" ]]; then
         log "no Brewfile in $DOTFILES_DIR, skipping"
         log "create one with: brew bundle dump --file=$DOTFILES_DIR/Brewfile"
@@ -107,7 +99,6 @@ brew_bundle() {
 # --keep-zshrc keeps it from writing its own .zshrc, which would collide with
 # the one stow is about to link.
 install_oh_my_zsh() {
-    section "oh-my-zsh"
     if [[ -d "$HOME/.oh-my-zsh" ]]; then
         log "already installed"
         return 0
@@ -118,7 +109,6 @@ install_oh_my_zsh() {
 }
 
 install_tpm() {
-    section "tmux plugin manager"
     if [[ -d "$HOME/.tmux/plugins/tpm" ]]; then
         log "already installed"
         return 0
@@ -127,7 +117,6 @@ install_tpm() {
 }
 
 clear_conflicts() {
-    section "stow conflicts"
     local f
     for f in "$HOME/.zshrc" "$HOME/.zprofile" "$HOME/.zshenv" \
              "$HOME/.tmux.conf" "$HOME/.gitconfig"; do
@@ -137,7 +126,6 @@ clear_conflicts() {
 }
 
 run_stow() {
-    section "stow"
     if ! have stow; then
         log "stow not found, install it with: brew install stow"
         return 1
@@ -157,7 +145,6 @@ run_stow() {
 }
 
 post_install() {
-    section "post install"
     if [[ -x "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]]; then
         execute "$HOME/.tmux/plugins/tpm/bin/install_plugins"
     fi
