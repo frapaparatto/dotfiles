@@ -1,16 +1,186 @@
 #!/usr/bin/env bash
-
-# installing homebrew
-curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
-
-# actually check if installed, if so 
-brew bundle install
-
-# check everything is ok
-# install zsh and so on
-# remove the generated .zshrc
 #
-# install tpm
-# install stow if not present
-# run stow and setup
+# setup: provision a machine from this dotfiles repo.
+#
+# Usage:
+#   ./setup              install everything
+#   ./setup --dry        print what would happen, change nothing
+#   ./setup nvim tmux    stow only these packages, still runs the install steps
+#
+# Safe to run more than once. Every step checks before acting.
 
+set -eo pipefail
+
+DOTFILES_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y-%m-%d-%H%M%S)"
+DEFAULT_PACKAGES="bin git nvim tmux zsh"
+PACKAGES=""
+DRY=0
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --dry|--dry-run) DRY=1 ;;
+        -h|--help) sed -n '3,11p' "$0"; exit 0 ;;
+        -*) echo "unknown option: $1" >&2; exit 1 ;;
+        *) PACKAGES="$PACKAGES $1" ;;
+    esac
+    shift
+done
+
+[[ -z "$PACKAGES" ]] && PACKAGES="$DEFAULT_PACKAGES"
+
+log() {
+    if [[ $DRY == 1 ]]; then
+        echo "[DRY_RUN] $*"
+    else
+        echo "$*"
+    fi
+}
+
+execute() {
+    log "run: $*"
+    [[ $DRY == 1 ]] && return 0
+    "$@"
+}
+
+have() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+section() {
+    echo
+    echo "$1"
+}
+
+# Move a real file or directory out of the way so stow can link in its place.
+# Symlinks are left alone: those are already ours.
+backup_if_real() {
+    local target="$1"
+    [[ -e "$target" && ! -L "$target" ]] || return 0
+    log "backing up $target"
+    [[ $DRY == 1 ]] && return 0
+    mkdir -p "$BACKUP_DIR"
+    mv "$target" "$BACKUP_DIR/"
+}
+
+install_homebrew() {
+    section "homebrew"
+    if have brew; then
+        log "already installed"
+        return 0
+    fi
+    execute /bin/bash -c \
+        "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+}
+
+# Homebrew is not on PATH yet in this process: PATH was built when the script
+# started, and .zprofile has not been stowed. shellenv fixes it for this run.
+load_brew_env() {
+    section "brew environment"
+    local prefix
+    for prefix in /opt/homebrew /usr/local; do
+        if [[ -x "$prefix/bin/brew" ]]; then
+            log "loading shellenv from $prefix"
+            eval "$("$prefix/bin/brew" shellenv)"
+            return 0
+        fi
+    done
+    if [[ $DRY == 1 ]]; then
+        log "brew not found, would load shellenv after install"
+        return 0
+    fi
+    echo "brew not found after install, aborting" >&2
+    exit 1
+}
+
+brew_bundle() {
+    section "brew bundle"
+    if [[ ! -f "$DOTFILES_DIR/Brewfile" ]]; then
+        log "no Brewfile in $DOTFILES_DIR, skipping"
+        log "create one with: brew bundle dump --file=$DOTFILES_DIR/Brewfile"
+        return 0
+    fi
+    execute brew bundle install --file="$DOTFILES_DIR/Brewfile"
+}
+
+# --unattended keeps the installer from launching zsh and from running chsh.
+# --keep-zshrc keeps it from writing its own .zshrc, which would collide with
+# the one stow is about to link.
+install_oh_my_zsh() {
+    section "oh-my-zsh"
+    if [[ -d "$HOME/.oh-my-zsh" ]]; then
+        log "already installed"
+        return 0
+    fi
+    execute sh -c \
+        "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+        "" --unattended --keep-zshrc
+}
+
+install_tpm() {
+    section "tmux plugin manager"
+    if [[ -d "$HOME/.tmux/plugins/tpm" ]]; then
+        log "already installed"
+        return 0
+    fi
+    execute git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+}
+
+clear_conflicts() {
+    section "stow conflicts"
+    local f
+    for f in "$HOME/.zshrc" "$HOME/.zprofile" "$HOME/.zshenv" \
+             "$HOME/.tmux.conf" "$HOME/.gitconfig"; do
+        backup_if_real "$f"
+    done
+    log "backups, if any, are in $BACKUP_DIR"
+}
+
+run_stow() {
+    section "stow"
+    if ! have stow; then
+        log "stow not found, install it with: brew install stow"
+        return 1
+    fi
+    local pkg
+    for pkg in $PACKAGES; do
+        if [[ ! -d "$DOTFILES_DIR/$pkg" ]]; then
+            log "no package named $pkg, skipping"
+            continue
+        fi
+        if [[ $DRY == 1 ]]; then
+            (cd "$DOTFILES_DIR" && stow -n -v "$pkg")
+        else
+            execute stow -v -d "$DOTFILES_DIR" -t "$HOME" "$pkg"
+        fi
+    done
+}
+
+post_install() {
+    section "post install"
+    if [[ -x "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]]; then
+        execute "$HOME/.tmux/plugins/tpm/bin/install_plugins"
+    fi
+    if have nvim; then
+        execute nvim --headless "+Lazy! sync" +qa
+    fi
+    echo
+    log "done. open a new terminal to pick up the new shell config."
+}
+
+main() {
+    [[ $DRY == 1 ]] && echo "----------------- DRY RUN -------------------"
+    log "dotfiles: $DOTFILES_DIR"
+    log "packages:$PACKAGES"
+
+    install_homebrew
+    load_brew_env
+    brew_bundle
+    install_oh_my_zsh
+    install_tpm
+    clear_conflicts
+    run_stow
+    post_install
+}
+
+main
