@@ -59,12 +59,9 @@ backup_if_real() {
 }
 
 install_homebrew() {
-    if have brew; then
-        log "already installed"
-        return 0
-    fi
-    execute /bin/bash -c \
-        "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    if have brew; then log "homebrew already installed"; return 0; fi
+    if [[ $DRY == 1 ]]; then log "would install homebrew"; return 0; fi
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 }
 
 # Homebrew is not on PATH yet in this process: PATH was built when the script
@@ -100,17 +97,20 @@ brew_bundle() {
 # the one stow is about to link.
 install_oh_my_zsh() {
     if [[ -d "$HOME/.oh-my-zsh" ]]; then
-        log "already installed"
+        log "oh-my-zsh already installed"
         return 0
     fi
-    execute sh -c \
-        "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+    if [[ $DRY == 1 ]]; then
+        log "would install oh-my-zsh"
+        return 0
+    fi
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
         "" --unattended --keep-zshrc
 }
 
 install_tpm() {
     if [[ -d "$HOME/.tmux/plugins/tpm" ]]; then
-        log "already installed"
+        log "tmux-tpm already installed"
         return 0
     fi
     execute git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
@@ -121,7 +121,7 @@ install_tpm() {
 # has no such self-install, so it's fetched here instead.
 install_vim_plug() {
     if [[ -f "$HOME/.vim/autoload/plug.vim" ]]; then
-        log "already installed"
+        log "vim-plug already installed"
         return 0
     fi
     execute curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
@@ -173,7 +173,7 @@ post_install() {
 main() {
     [[ $DRY == 1 ]] && echo "----------------- DRY RUN -------------------"
     log "dotfiles: $DOTFILES_DIR"
-    log "packages:$PACKAGES"
+    log "packages: $PACKAGES"
 
     install_homebrew
     load_brew_env
