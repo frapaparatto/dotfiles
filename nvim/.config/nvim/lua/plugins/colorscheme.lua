@@ -64,7 +64,7 @@ return {
       variant = "main",
       dark_variant = "main",
       styles = {
-        bold = true,
+        bold = false,
         italic = false,
         transparency = false,
       },

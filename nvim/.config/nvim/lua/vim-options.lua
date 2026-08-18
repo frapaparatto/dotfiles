@@ -69,3 +69,7 @@ vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 vim.keymap.set("n", "<C-f>", function()
   vim.fn.system("tmux neww tmux-sessionizer")
 end, { desc = "tmux sessionizer" })
+
+-- Quickfix
+vim.keymap.set("n", "<C-n>", "<cmd>cnext<CR>")
+vim.keymap.set("n", "<C-p>", "<cmd>cprev<CR>")
