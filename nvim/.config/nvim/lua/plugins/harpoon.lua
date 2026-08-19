@@ -17,8 +17,12 @@ return {
       "<cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>",
       { desc = "Harpoon menu" }
     )
+
+    --[[
+    -- With iterm those mapping don't work. I should map the option key to Esc+ in the terminal settings
     vim.keymap.set("n", "<M-n>", "<cmd>lua require('harpoon.ui').nav_next()<CR>", { desc = "Harpoon next" })
     vim.keymap.set("n", "<M-p>", "<cmd>lua require('harpoon.ui').nav_prev()<CR>", { desc = "Harpoon prev" })
+    --]]
 
     vim.cmd("highlight! link HarpoonInactive Comment")
     vim.cmd("highlight! link HarpoonNumberInactive Comment")

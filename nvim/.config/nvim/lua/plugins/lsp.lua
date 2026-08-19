@@ -219,6 +219,20 @@ return {
           vim.lsp.buf.rename,
           vim.tbl_extend("force", opts, { desc = "Rename symbol" })
         )
+
+        -- diagnostics
+        vim.keymap.set(
+          "n",
+          "<leader>d",
+          vim.diagnostic.open_float,
+          vim.tbl_extend("force", opts, { desc = "Show diagnostic" })
+        )
+        vim.keymap.set(
+          "n",
+          "<leader>xq",
+          vim.diagnostic.setqflist,
+          vim.tbl_extend("force", opts, { desc = "Diagnostics to quickfix" })
+        )
       end,
     })
   end,
