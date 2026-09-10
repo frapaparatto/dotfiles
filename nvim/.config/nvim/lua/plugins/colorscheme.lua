@@ -11,6 +11,15 @@ return {
 }
 --]]
 
+return {
+  "p0209p/naysayer.vim",
+  priority = 1000,
+  lazy = false,
+  config = function()
+    vim.cmd.colorscheme("naysayer")
+  end,
+}
+
 --[[
 return {
   "rose-pine/neovim",
@@ -54,6 +63,7 @@ return {
 --]]
 
 -- Rose-pine theme colori accesi
+--[[
 return {
   "rose-pine/neovim",
   name = "rose-pine",
@@ -85,3 +95,4 @@ return {
     vim.cmd.colorscheme("rose-pine")
   end,
 }
+--]]
