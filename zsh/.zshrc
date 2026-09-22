@@ -127,6 +127,7 @@ typeset -U PATH
 export PATH="$HOME/.cargo/bin:$PATH"
 
 alias reload='source ~/.zshrc && echo "zsh config sourced"'
+alias python='python3'
 
 # Setup fzf key bindings and fuzzy completion
 source <(fzf --zsh)
