@@ -131,3 +131,6 @@ alias python='python3'
 
 # Setup fzf key bindings and fuzzy completion
 source <(fzf --zsh)
+
+# opencode
+export PATH=/Users/francescopaparatto/.opencode/bin:$PATH
