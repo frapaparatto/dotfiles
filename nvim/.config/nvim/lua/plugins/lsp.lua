@@ -199,6 +199,12 @@ return {
           vim.lsp.buf.type_definition,
           vim.tbl_extend("force", opts, { desc = "Go to type definition" })
         )
+        vim.keymap.set(
+          { "n", "i" },
+          "<C-s>",
+          vim.lsp.buf.signature_help,
+          vim.tbl_extend("force", opts, { desc = "Signature help" })
+        )
 
         -- actions
         vim.keymap.set(
